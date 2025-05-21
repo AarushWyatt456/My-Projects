@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+
+        .container {
+            display: flex;
+            gap: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        .form-section,
+        .result-section {
+            width: 300px;
+        }
+
+        .form-section h2,
+        .result-section h2 {
+            margin-bottom: 15px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 4px;
+            border: 1px solid #aaa;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .result-box {
+            background: #f8f9fa;
+            padding: 10px;
+            border: 1px dashed #aaa;
+            border-radius: 5px;
+        }
+
+        .result-box p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Registration Form -->
+        <div class="form-section">
+            <h2>Student Registration</h2>
+            <form id="studentForm">
+                <input type="text" id="name" placeholder="Full Name" required />
+                <input type="email" id="email" placeholder="Email Address" required />
+                <input type="text" id="roll" placeholder="Roll Number" required />
+                <select id="department" required>
+                    <option value="">Select Department</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Mechanical">Mechanical</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Civil">Civil</option>
+                </select>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        
+        <div class="result-section">
+            <h2>Registration Result</h2>
+            <div class="result-box" id="resultBox">
+                <p>Fill out the form to see the result here.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('studentForm');
+        const resultBox = document.getElementById('resultBox');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+           
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const roll = document.getElementById('roll').value.trim();
+            const dept = document.getElementById('department').value;
+
+            
+            resultBox.innerHTML = `
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Roll Number:</strong> ${roll}</p>
+      <p><strong>Department:</strong> ${dept}</p>
+      <p style="color:green;"><strong>Status:</strong> Successfully Registered!</p>
+    `;
+
+           
+            form.reset();
+        });
+    </script>
+
+</body>
+
+</html>
