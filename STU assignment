@@ -1,4 +1,5 @@
 package com.pj;
+
 import java.io.*;
 import java.util.*;
 
@@ -45,7 +46,7 @@ class Student {
     }
 }
 
-public class Stumam {
+public class StudentManager {
     private static List<Student> students = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
     private static final String FILE_NAME = "students.txt";
@@ -54,7 +55,7 @@ public class Stumam {
         loadStudents();
         
         while (true) {
-            System.out.println("\nBasic Student Management System");
+            System.out.println("\nStudent Management System");
             System.out.println("1. Add Student");
             System.out.println("2. View All Students");
             System.out.println("3. Search Student");
@@ -103,6 +104,10 @@ public class Stumam {
             System.out.print("Subject name: ");
             String subject = scanner.nextLine().trim();
             if (subject.equalsIgnoreCase("done")) break;
+            if (subject.isEmpty()) {
+                System.out.println("Subject name cannot be empty");
+                continue;
+            }
             
             System.out.print("Mark (0-100): ");
             try {
@@ -165,10 +170,11 @@ public class Stumam {
         System.out.print("Enter student ID to delete: ");
         String id = scanner.nextLine().trim();
         
-        for (Iterator<Student> it = students.iterator(); it.hasNext();) {
-            Student s = it.next();
+        Iterator<Student> iterator = students.iterator();
+        while (iterator.hasNext()) {
+            Student s = iterator.next();
             if (s.getId().equalsIgnoreCase(id)) {
-                it.remove();
+                iterator.remove();
                 System.out.println("Student deleted successfully");
                 return;
             }
@@ -178,13 +184,14 @@ public class Stumam {
     }
 
     private static void saveStudents() {
+        ensureDataFile();
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME))) {
             for (Student s : students) {
                 writer.println(s.getId() + "," + s.getName());
                 for (Map.Entry<String, Integer> entry : s.getSubjects().entrySet()) {
                     writer.println(entry.getKey() + "," + entry.getValue());
                 }
-                writer.println("---"); 
+                writer.println("---");
             }
             System.out.println("Data saved successfully");
         } catch (IOException e) {
@@ -193,16 +200,20 @@ public class Stumam {
     }
 
     private static void loadStudents() {
+        ensureDataFile();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
             String line;
             String id = null, name = null;
             Map<String, Integer> subjects = new HashMap<>();
             
             while ((line = reader.readLine()) != null) {
+                line = line.trim();
                 if (line.equals("---")) {
                     if (id != null && name != null && !subjects.isEmpty()) {
                         students.add(new Student(id, name, subjects));
                         subjects = new HashMap<>();
+                        id = null;
+                        name = null;
                     }
                     continue;
                 }
@@ -210,11 +221,11 @@ public class Stumam {
                 String[] parts = line.split(",");
                 if (parts.length == 2) {
                     if (id == null) {
-                        id = parts[0];
-                        name = parts[1];
+                        id = parts[0].trim();
+                        name = parts[1].trim();
                     } else {
                         try {
-                            subjects.put(parts[0], Integer.parseInt(parts[1]));
+                            subjects.put(parts[0].trim(), Integer.parseInt(parts[1].trim()));
                         } catch (NumberFormatException e) {
                             System.out.println("Error reading mark for " + parts[0]);
                         }
@@ -223,10 +234,20 @@ public class Stumam {
             }
             System.out.println("Loaded " + students.size() + " students");
         } catch (FileNotFoundException e) {
-            System.out.println("No existing data file found");
+            System.out.println("No existing data file found - starting fresh");
         } catch (IOException e) {
             System.out.println("Error loading data: " + e.getMessage());
         }
     }
 
+    private static void ensureDataFile() {
+        File file = new File(FILE_NAME);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                System.out.println("Could not create data file: " + e.getMessage());
+            }
+        }
+    }
 }
