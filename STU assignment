@@ -1,0 +1,237 @@
+package com.pj;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.*;
+
+class Student implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String id;
+    private String name;
+    private Map<String, Integer> subjectMarks;
+
+    public Student(String id, String name, Map<String, Integer> subjectMarks) {
+        this.id = id;
+        this.name = name;
+        this.subjectMarks = new HashMap<>(subjectMarks);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Map<String, Integer> getSubjectMarks() {
+        return new HashMap<>(subjectMarks);
+    }
+
+    public CompletableFuture<Integer> getTotalMarks() {
+        return CompletableFuture.supplyAsync(() -> 
+            subjectMarks.values().stream().mapToInt(Integer::intValue).sum()
+        );
+    }
+
+    public CompletableFuture<Double> getAverageMarks() {
+        return getTotalMarks().thenApplyAsync(total -> 
+            subjectMarks.isEmpty() ? 0.0 : (double) total / subjectMarks.size()
+        );
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Student ID: ").append(id).append("\n");
+        sb.append("Name: ").append(name).append("\n");
+        sb.append("Subjects:\n");
+        subjectMarks.forEach((subject, mark) -> 
+            sb.append("  ").append(subject).append(": ").append(mark).append("\n")
+        );
+        
+        try {
+            int total = getTotalMarks().get();
+            double average = getAverageMarks().get();
+            sb.append("Total Marks: ").append(total).append("\n");
+            sb.append("Average: ").append(String.format("%.2f", average)).append("\n");
+        } catch (Exception e) {
+            sb.append("Error calculating marks\n");
+        }
+        
+        return sb.toString();
+    }
+}
+
+public class StudentManagementSystem {
+    private static final String DATA_FILE = "students.dat";
+    private static Set<String> studentIds = new HashSet<>();
+    private static List<Student> students = new ArrayList<>();
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        loadStudents();
+        
+        while (true) {
+            System.out.println("\nStudent Management System");
+            System.out.println("1. Add Student");
+            System.out.println("2. Search Student");
+            System.out.println("3. Delete Student");
+            System.out.println("4. Display All Students");
+            System.out.println("5. Save and Exit");
+            System.out.print("Enter your choice: ");
+            
+            try {
+                int choice = Integer.parseInt(scanner.nextLine());
+                
+                switch (choice) {
+                    case 1:
+                        addStudent();
+                        break;
+                    case 2:
+                        searchStudent();
+                        break;
+                    case 3:
+                        deleteStudent();
+                        break;
+                    case 4:
+                        displayAllStudents();
+                        break;
+                    case 5:
+                        saveStudents();
+                        System.out.println("Data saved. Exiting...");
+                        return;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+    }
+
+    private static void addStudent() {
+        System.out.print("Enter student ID: ");
+        String id = scanner.nextLine().trim().toUpperCase();
+        
+        if (studentIds.contains(id)) {
+            System.out.println("Student ID already exists.");
+            return;
+        }
+        
+        System.out.print("Enter student name: ");
+        String name = scanner.nextLine().trim();
+        
+        Map<String, Integer> subjectMarks = new HashMap<>();
+        System.out.println("Enter subjects and marks (enter 'done' when finished):");
+        
+        while (true) {
+            System.out.print("Subject name (or 'done'): ");
+            String subject = scanner.nextLine().trim();
+            
+            if (subject.equalsIgnoreCase("done")) {
+                break;
+            }
+            
+            if (subject.isEmpty()) {
+                System.out.println("Subject name cannot be empty.");
+                continue;
+            }
+            
+            System.out.print("Mark (0-100): ");
+            try {
+                int mark = Integer.parseInt(scanner.nextLine());
+                if (mark < 0 || mark >= 100) {
+                    System.out.println("Mark must be between 0 and 100.");
+                    continue;
+                }
+                subjectMarks.put(subject, mark);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid mark. Please enter a number.");
+            }
+        }
+        
+        if (subjectMarks.isEmpty()) {
+            System.out.println("Student must have at least one subject.");
+            return;
+        }
+        
+        Student student = new Student(id, name, subjectMarks);
+        students.add(student);
+        studentIds.add(id);
+        System.out.println("Student added successfully.");
+    }
+
+    private static void searchStudent() {
+        System.out.print("Enter student ID or name to search: ");
+        String query = scanner.nextLine().trim().toLowerCase();
+        
+        List<Student> results = students.stream()
+            .filter(s -> s.getId().toLowerCase().contains(query) || 
+                        s.getName().toLowerCase().contains(query))
+            .collect(Collectors.toList());
+        
+        if (results.isEmpty()) {
+            System.out.println("No students found matching your query.");
+        } else {
+            System.out.println("\nFound " + results.size() + " student(s):");
+            results.forEach(System.out::println);
+        }
+    }
+
+    private static void deleteStudent() {
+        System.out.print("Enter student ID to delete: ");
+        String id = scanner.nextLine().trim().toUpperCase();
+        
+        if (!studentIds.contains(id)) {
+            System.out.println("Student ID not found.");
+            return;
+        }
+        
+        students.removeIf(s -> s.getId().equals(id));
+        studentIds.remove(id);
+        System.out.println("Student deleted successfully.");
+    }
+
+    private static void displayAllStudents() {
+        if (students.isEmpty()) {
+            System.out.println("No students in the system.");
+            return;
+        }
+        
+        System.out.println("\nAll Students:");
+        students.forEach(System.out::println);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void loadStudents() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(DATA_FILE))) {
+            students = (List<Student>) ois.readObject();
+            studentIds = students.stream()
+                .map(Student::getId)
+                .collect(Collectors.toSet());
+            System.out.println("Student data loaded successfully.");
+        } catch (FileNotFoundException e) {
+            System.out.println("No existing data file found. Starting with empty system.");
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error loading student data: " + e.getMessage());
+        }
+    }
+
+    private static void saveStudents() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
+            oos.writeObject(students);
+            System.out.println("Student data saved successfully.");
+        } catch (IOException e) {
+            System.out.println("Error saving student data: " + e.getMessage());
+        }
+        
+     
+        try (PrintWriter writer = new PrintWriter(new File("students.txt"))) {
+            students.forEach(student -> writer.println(student.toString()));
+            System.out.println("Student data also saved in text format.");
+        } catch (FileNotFoundException e) {
+            System.out.println("Error saving text file: " + e.getMessage());
+        }
+    }
+}
