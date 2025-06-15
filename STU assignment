@@ -45,7 +45,7 @@ class Student {
     }
 }
 
-public class BasicStudentManager {
+public class Stumam {
     private static List<Student> students = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
     private static final String FILE_NAME = "students.txt";
