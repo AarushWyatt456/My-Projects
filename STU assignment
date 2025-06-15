@@ -184,7 +184,7 @@ public class BasicStudentManager {
                 for (Map.Entry<String, Integer> entry : s.getSubjects().entrySet()) {
                     writer.println(entry.getKey() + "," + entry.getValue());
                 }
-                writer.println("---"); // Separator between students
+                writer.println("---"); 
             }
             System.out.println("Data saved successfully");
         } catch (IOException e) {
