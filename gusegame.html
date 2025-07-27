@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guess Game</title>
+   <link rel="stylesheet" href="../BS/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .game-container {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        #feedback {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        #history {
+            margin-top: 20px;
+            text-align: left;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .btn-group {
+            margin-top: 15px;
+        }
+        @keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.blinking {
+  animation: blink 1s linear infinite;
+  font-weight: bold;
+  color: #ff0; 
+}
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <h1> Guess the Number!</h1>
+        <p>I’m thinking of a number between <strong>1 and 100</strong>. Can you guess it?</p>
+
+        <input type="number" id="guessInput" class="form-control mb-3" placeholder="Enter your guess" />
+
+        <div class="btn-group">
+            <button id="guessButton" class="btn btn-warning me-2">Submit</button>
+            <button id="resetButton" class="btn btn-light">Reset</button>
+        </div>
+
+        <p id="feedback"></p>
+        <div id="history">
+            <h5> Guess History:</h5>
+            <ul id="guessList" class="mb-0"></ul>
+        </div>
+    </div>
+
+    <script>
+        let randomNumber;
+        let attempts;
+        let guessList;
+
+        function startGame() {
+            randomNumber = Math.floor(Math.random() * 100) + 1;
+            attempts = 0;
+            guessList = [];
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('guessInput').value = '';
+            document.getElementById('guessList').innerHTML = '';
+        }
+
+        function checkGuess() {
+            const input = document.getElementById('guessInput');
+            const userGuess = parseInt(input.value);
+            const feedback = document.getElementById('feedback');
+
+            if (isNaN(userGuess)) {
+                feedback.textContent = " Please enter a valid number.";
+                feedback.style.color = "yellow";
+                return;
+            }
+
+            attempts++;
+            guessList.push(userGuess);
+            updateGuessHistory();
+
+            if (userGuess < randomNumber) {
+                feedback.textContent = " အရမ်းသေးတာပဲ! ထပ်ရေး.";
+                feedback.style.color = "lightblue";
+            } else if (userGuess > randomNumber) {
+                feedback.textContent = " အရမ်းကြီးတယ်! ထပ်လုပ်.";
+                feedback.style.color = "lightcoral";
+            } else {
+                feedback.innerHTML = `<span class="blinking">ဂုဏ်ယူပါတယ်နော်!!</span> မှန်သွားပြီဟေ့!!တော်လိုက်တာ  ${randomNumber}. You guessed it in ${attempts} attempts.`;
+                feedback.style.color = "lightgreen";
+            }
+
+            input.value = '';
+        }
+
+        function updateGuessHistory() {
+            const guessListElement = document.getElementById('guessList');
+            guessListElement.innerHTML = '';
+            guessList.forEach((guess, index) => {
+                const li = document.createElement('li');
+                li.textContent = `Attempt ${index + 1}: ${guess}`;
+                guessListElement.appendChild(li);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('guessButton').addEventListener('click', checkGuess);
+            document.getElementById('resetButton').addEventListener('click', startGame);
+            startGame();
+        });
+    </script>
+</body>
+
+</html>
