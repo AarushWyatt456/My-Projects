@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burger Menu Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: antiquewhite;
+            color: #2b2b6e;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #e0e6f0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #5c3ea7;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #999;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4b89dc;
+            color: white;
+        }
+
+        td img {
+            width: 50px;
+            height: auto;
+        }
+
+        a {
+            color: #2e3cb3;
+        }
+
+        form {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #d7eaff;
+            border-radius: 8px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .section-title {
+            margin-top: 40px;
+            font-size: 24px;
+            color: #3e2f6e;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Welcome to My Burger Web Page</h1>
+        <p>These are menus for you. Visit our <a href="https://www.online-calculator.com/#google_vignette"
+                target="_blank">Voucher Page</a> to get discounts!</p>
+
+<!-- Burger Menu -->
+<h2 class="section-title">🍔 Burger Menu</h2>
+<table>
+    <tr>
+        <th>Select</th>
+        <th>Item</th>
+        <th>Price</th>
+    </tr>
+    <tr>
+        <td><input type="checkbox" name="item" value="5600"></td>
+        <td>Chicken Burger</td>
+        <td>5600ks</td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" name="item" value="5600"></td>
+        <td>Beef Burger</td>
+        <td>5600ks</td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" name="item" value="5600"></td>
+        <td>Pork Burger</td>
+        <td>5600ks</td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" name="item" value="6000"></td>
+        <td>Double Cheese Burger</td>
+        <td>6000ks</td>
+    </tr>
+</table>
+
+<!-- Fried Chicken -->
+<h2 class="section-title">🍗 Fried Chicken</h2>
+<table>
+    <tr>
+        <th>Select</th>
+        <th>Item</th>
+        <th>Price</th>
+    </tr>
+    <tr>
+        <td><input type="checkbox" name="item" value="3000"></td>
+        <td>Single Chicken</td>
+        <td>3000ks</td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" name="item" value="16000"></td>
+        <td>FA Set</td>
+        <td>16000ks</td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" name="item" value="25000"></td>
+        <td>Family Set</td>
+        <td>25000ks</td>
+    </tr>
+</table>
+
+<!-- Drinks -->
+<h2 class="section-title">🥤 Drinks</h2>
+<table>
+    <tr>
+        <th>Select</th>
+        <th>Item</th>
+        <th>Price</th>
+    </tr>
+    <tr>
+        <td><input type="checkbox" name="item" value="1500"></td>
+        <td>Coke</td>
+        <td>1500ks</td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" name="item" value="1500"></td>
+        <td>Milo</td>
+        <td>1500ks</td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" name="item" value="2000"></td>
+        <td>Orange Juice</td>
+        <td>2000ks</td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" name="item" value="2000"></td>
+        <td>Lemon Tea</td>
+        <td>2000ks</td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" name="item" value="3000"></td>
+        <td>Ice-Americano</td>
+        <td>3000ks</td>
+    </tr>
+</table>
+
+
+    <!-- Order Form -->
+    <h2 class="section-title">📝 Place Your Order</h2>
+    <form id="order-form" onsubmit="event.preventDefault(); calculateTotal();">
+        <label for="table-number">Table Number</label>
+        <input type="text" id="table-number" name="table-number" placeholder="Enter your table number" required>
+        <br><br>
+        <input type="submit" value="Submit Order">
+    </form>
+    
+    <!-- Display Results -->
+    <div id="orderSummary" style="margin-top: 20px;">
+        <h3 id="selectedItems"></h3>
+        <h3 id="totalAmount"></h3>
+        <h3 id="voucherCode"></h3>
+    </div>
+
+    
+<script>
+    function calculateTotal() {
+        const checkboxes = document.querySelectorAll('input[name="item"]:checked');
+        let subtotal = 0;
+        let itemList = [];
+
+        checkboxes.forEach(cb => {
+            const row = cb.closest("tr");
+            const itemName = row.cells[1].innerText;
+            const itemPrice = parseFloat(cb.value);
+            itemList.push(`${itemName} - ${itemPrice.toLocaleString()} ks`);
+            subtotal += itemPrice;
+        });
+
+        // Tax calculation (5%)
+        const taxRate = 0.05;
+        const taxAmount = subtotal * taxRate;
+        const finalTotal = subtotal + taxAmount;
+
+        // Generate random voucher code
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let voucher = "VOUCHER-";
+        for (let i = 0; i < 8; i++) {
+            voucher += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+
+        // Display results
+        document.getElementById("selectedItems").innerHTML =
+            "<strong>🧾 You Ordered:</strong><br>" + itemList.join("<br>");
+        document.getElementById("totalAmount").innerHTML = `
+            <strong>💳 Subtotal:</strong> ${subtotal.toLocaleString()} ks<br>
+            <strong>📈 Tax (5%):</strong> ${taxAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })} ks<br>
+            <strong>💰 Final Total:</strong> ${finalTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })} ks
+        `;
+        document.getElementById("voucherCode").innerHTML =
+            "<strong>🎁 Voucher Code:</strong> " + voucher;
+    }
+</script>
+
+
+    </div>
+
+</body>
+
+</html>
